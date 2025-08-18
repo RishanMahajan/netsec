@@ -14,24 +14,27 @@ class DataValidation:
     def __init__(
             self,data_ingestion_artifact:DataIngestionArtifact,
             data_validation_config:DataValidationConfig
+            # Beacuse we need paths(ValidationConfig) & train,test ke paths(IngestionArtifact)
     ):
         try:
             self.data_validation_config=data_validation_config
             self.data_ingestion_artifact=data_ingestion_artifact
-            self.schema_config=read_yaml_file(SCHEMA_FILE_PATH)
+            self.schema_config=read_yaml_file(SCHEMA_FILE_PATH) # Defined in utils
+            # Returns contents of yaml file as a dict
         except Exception as e:
             raise NetworkSecurityException(e,sys)
         
     @staticmethod
-    def read_data(file_path)->pd.DataFrame:
+    def read_data(file_path)->pd.DataFrame: # Reads data and returns it as a df
         try:
             return pd.read_csv(file_path)
         except Exception as e:
             raise NetworkSecurityException(e,sys)
         
     def validate_no_of_columns(self,dataframe:pd.DataFrame)->bool:
+        # Returns true if no of colm in dataframe we passed and schema.yaml is same
         try:
-            number_of_columns=len(self.schema_config)
+            number_of_columns=len(self.schema_config) # No of colms in schema.yaml 
             logging.info(f"Reqd no. of colms : {number_of_columns}")
             logging.info(f"Dataframe has columns : {len(dataframe.columns)}")
 
@@ -42,7 +45,7 @@ class DataValidation:
         except Exception as e:
             raise NetworkSecurityException(e,sys)
         
-    def check_numeric_columns(self,dataframe:pd.DataFrame)->bool:
+    def check_numeric_columns(self,dataframe:pd.DataFrame)->bool: # Easy,Self Explanatory
         try:
             numeric_columns=self.schema_config['numerical_columns']
             missing_columns=[col for col in numeric_columns if col not in dataframe.columns]
@@ -57,15 +60,14 @@ class DataValidation:
         
     def detect_dataset_drift(self,base_df,current_df,threshold=0.05)->bool:
         try:
-            status=True
-            report={}
+            status=True # Even if theres drift in any one column, it'll be set to false
+            report={} # Column:{p_value,drift_status}
             for column in base_df.columns:
                 d1=base_df[column]
                 d2=current_df[column]
                 # H0 -> No Drift
                 # H1 -> Drift hai
-                # if pvaluee>threshold, accept H0
-                # else reject H0
+                # if p_value>threshold, accept H0,else reject H0
                 is_same_dist=ks_2samp(d1,d2)
                 if threshold<=is_same_dist.pvalue:
                     is_found=False
@@ -78,10 +80,11 @@ class DataValidation:
                 }})
 
             drift_report_file_path=self.data_validation_config.drift_report_file_path
-            dir_name=os.path.dirname(drift_report_file_path,)
+            dir_name=os.path.dirname(drift_report_file_path)
             os.makedirs(dir_name,exist_ok=True)
 
             write_yaml_file(file_path=drift_report_file_path,content=report)
+            # Jo report ke key value pairs hai,unko as a yaml file store krlo
 
         except Exception as e:
             raise NetworkSecurityException(e,sys)
