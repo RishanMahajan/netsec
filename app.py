@@ -17,6 +17,11 @@ from networksecurity.utils.ml_utils.model.estimator import NetworkModel
 
 from fastapi.middleware.cors import CORSMiddleware
 from uvicorn import run as app_run
+'''
+FastAPI is the web framework.
+
+Uvicorn is the server that runs FastAPI
+'''
 from fastapi import FastAPI,File,Request,UploadFile
 from fastapi.responses import Response
 from starlette.responses import RedirectResponse
@@ -29,6 +34,7 @@ from networksecurity.constant.training_pipeline import DATA_INGESTION_COLLECTION
 from fastapi.templating import  Jinja2Templates
 templates=Jinja2Templates(directory='./templates') 
 # Picks up all the hmtl files from templates folder
+# Jinja2 = a way to merge Python values into HTML files,so you can render dynamic pages
 
 client=pymongo.MongoClient(mongo_db_url,tlsCAFile=ca)
 database=client[DATA_INGESTION_DATABASE_NAME]
@@ -88,3 +94,6 @@ async def predict_route(request:Request,file:UploadFile=File(...)):
 
 if __name__=='__main__':
     app_run(app,host='localhost',port=8000)
+
+
+# https://chatgpt.com/share/68a792c2-3cf4-800c-b151-f1b9a919760f
