@@ -70,15 +70,17 @@ class DataTransformationConfig:
             self.data_transformed_train_file_path:str=os.path.join(
                 self.data_transformation_dir,training_pipeline.DATA_TRANSFORMATION_TRANSFORMED_DATA_DIR,
                 training_pipeline.TRAIN_FILE_NAME.replace('csv','npy')
-            )
+            ) # Train ko transform krke alag se rakh liya in .npy format
             self.data_transformed_test_file_path:str=os.path.join(
                 self.data_transformation_dir,training_pipeline.DATA_TRANSFORMATION_TRANSFORMED_DATA_DIR,
                 training_pipeline.TEST_FILE_NAME.replace('csv','npy')
-            )
+            ) # Test ke liye bhi same
             self.transformed_obj_file_path:str=os.path.join(
                 self.data_transformation_dir,training_pipeline.DATA_TRANSFORMATION_TRANSFORMED_DATA_DIR,
                 training_pipeline.PREPROCESSING_OBJECT_FILE_NAME
-            )
+            ) # Pickle File
+            # Ye 'data_transformation' dir ke andar 'train.npy','test.npy','preprocessing.pkl'
+            # Inhi teeno ka path artifact mei bhi daala hai
 
 class ModelTrainerConfig:
      def __init__(self,training_pipeline_config:TrainingPipelineConfig):
@@ -88,7 +90,7 @@ class ModelTrainerConfig:
           self.trained_model_file_path:str=os.path.join(
                self.model_trainer_dir,training_pipeline.MODEL_TRAINER_TRAINED_MODEL_DIR,
                training_pipeline.MODEL_FILE_NAME
-          )
+          ) # 'model_trainer' ke andar 'trained_model' ke andar 'model.pkl'
           self.expected_accuracy:float=training_pipeline.MODEL_TRAINER_EXPECTED_SCORE
           self.model_overfitting_underfitting_threshold:float=training_pipeline.MODEL_TRAINER_OVERFITTING_UNDERFITTING_THRESHOLD
 

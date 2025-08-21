@@ -42,7 +42,7 @@ DATA_TRANSFORMATION_TRANSFORMED_OBJECT_DIR:str='transformed_object'
 DATA_TRANSFORMATION_IMPUTER_PARAMS:dict={
     'missing_values':np.nan,
     'n_neighbors':3,
-    'weights':'uniform'
+    'weights':'uniform' # All neighbours will have equal say i guess
 } # This is for KNN imputer. We use this to replace the missing values
 
 # Model Trainer related constants

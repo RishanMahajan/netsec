@@ -22,7 +22,10 @@ from sklearn.ensemble import (
 )
 from networksecurity.utils.main_utils.utils import evaluate_models
 import mlflow
-
+import joblib
+import dagshub
+dagshub.init(repo_owner='RishanMahajan', repo_name='netsec', mlflow=True)
+# Now your mlruns won't be created in vs code,but in dagshub
 
 
 class ModelTrainer:
@@ -46,7 +49,9 @@ class ModelTrainer:
             mlflow.log_metric('f1_score',f1_score)
             mlflow.log_metric('precision',precision_score)
             mlflow.log_metric('recall',recall_score)
-            mlflow.sklearn.log_model(best_model,"model")
+
+            joblib.dump(best_model, "best_model.pkl")
+            mlflow.log_artifact("best_model.pkl")
         
     def train_model(self,X_train,y_train,X_test,y_test):
         models={
@@ -98,7 +103,7 @@ class ModelTrainer:
 
         network_model=NetworkModel(preprocessor=preprocessor,model=best_model)
         save_object(self.model_trainer_config.trained_model_file_path,obj=NetworkModel)
-
+        save_object('final_model/model.pkl',best_model)
         model_trainer_artifact=ModelTrainerArtifact(
             trained_model_file_path=self.model_trainer_config.trained_model_file_path,
             train_metric_artifact=classification_train_metric,
